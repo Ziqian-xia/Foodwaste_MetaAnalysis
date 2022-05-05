@@ -2,8 +2,7 @@
 
 Author: Xi Tian, Ziqian Xia, Jinliang Xie, Chao Zhang, Yaobin Liu, Ming Xu
 
-## Environment Info
-               _                           
+## Environment Info                   
 platform       x86_64-w64-mingw32          
 arch           x86_64                      
 os             mingw32                     
@@ -20,14 +19,14 @@ version.string R version 4.1.3 (2022-03-10)
 nickname       One Push-Up 
 
 ## Package needed
-MAc
-tidyverse
-effectsize
-metafor
-meta
-metaviz
-texreg
-broom
-viridis
-RColorBrewer
+MAc,
+tidyverse,
+effectsize,
+metafor,
+meta,
+metaviz,
+texreg,
+broom,
+viridis,
+RColorBrewer,
 forcats
