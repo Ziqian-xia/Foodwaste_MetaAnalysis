@@ -83,8 +83,13 @@ library(forcats)
 # z-score data are saved in cleaned file, 
 #and it is further examined by review team
 
+#Typo Correction
+cleaned$Type_1[cleaned$Type_1=='Environmental Alternation']<-'Environmental alteration'
+
 #-------------Formal Analysis-------------------
 #Data is pre-loaded in the environment.
+
+
 
 m1<-rma(yi=z, vi = vi, method="DL", data = cleaned,test = "knha",slab = cleaned$citation)
 rma(yi=z, vi = vi, method="REML", data = cleaned,  test = "knha")
@@ -129,7 +134,7 @@ cleaned<-cleaned%>%
   mutate(citation=paste(Authors,Year))
 
 m.gen <- metagen(TE = z,
-                 seTE = vi*(N^0.5),
+                 seTE = (vi^0.5),
                  studlab = citation,
                  data = cleaned,
                  random = TRUE,
@@ -146,7 +151,7 @@ dev.off()
 rma(z, vi, subset=(Type_1=="Education"), data=cleaned,method = 'DL')
 rma(z, vi, subset=(Type_1=="Tips"), data=cleaned,method = 'DL')
 rma(z, vi, subset=(Type_1=="Consequence"), data=cleaned,method = 'DL')
-rma(z, vi, subset=(Type_1=="Environmental Alternation"), data=cleaned,method = 'DL')
+rma(z, vi, subset=(Type_1=="Environmental alteration"), data=cleaned,method = 'DL')
 rma(z, vi, subset=(Type_1=="Feedback"), data=cleaned,method = 'DL')
 rma(z, vi, subset=(Type_1=="Incentive"), data=cleaned,method = 'DL')
 
@@ -154,7 +159,10 @@ rma(z, vi, subset=(Type_1=="Incentive"), data=cleaned,method = 'DL')
 #Note 'Prompt','Feedback','Consequence' are merged as information intervention
 
 rma(z, vi, mods = ~Duration_intervention_days+as.factor(exper)+as.factor(measure)
-              +as.factor(region)+as.factor(scenario)+Year, data=cleaned,method = 'REML')
+              +as.factor(region)+
+      as.factor(scenario)+
+      Year, data=cleaned,method = 'REML')
+
 
 summary(rma(z, vi,subset=(Type_1=="Prompt"|Type_1=='Feedback'|Type_1=="Consequence"|Type_1=="Tips"), mods = ~Duration_intervention_days+as.factor(exper)+as.factor(measure)
               +as.factor(region)+as.factor(scenario)+Year, data=cleaned,method = 'REML'))
@@ -193,6 +201,9 @@ cleaned%>%
 
 factor(subgroup$type,levels = c('Subgroup Effect','Main Effect'))
 
+#Typo correction
+subgroup$type[subgroup$type=='Environmental Alternation']<-'Environmental alteration'
+
 subgroup%>%
   mutate(type = fct_reorder(type, yi)) %>%
   ggplot( aes(y=type, x=yi, xmin=lowerci, xmax=upperci, color = effect))+
@@ -226,14 +237,14 @@ cleaned%>%
                         N>=500~"N≥500"))%>%
   mutate(typefac=factor(cleaned$Type_1,levels = c("Prompt","Education","Tips",
                                                   "Consequence","Feedback",
-                                                  "Incentive","Environmental Alternation")))%>%
+                                                  "Incentive","Environmental alteration")))%>%
   ggplot(aes(fill=size, y=N, x=typefac)) + 
   geom_bar(position="fill", stat="identity")+
   scale_fill_brewer(palette = "Set3")+
   scale_x_discrete(expand=c(0,0))+
   scale_y_continuous(expand=c(0,0)) +
   theme_bw()+
-  theme(axis.text.x = element_text(angle = 45, hjust = 1))+
-  labs(fill='Sample Size',x='Intervention Type',y='Percentage')
+  theme(axis.text.x = element_text(angle = 45, hjust = 1),axis.title.x = element_blank())+
+  labs(fill='Sample Size',y='Percentage')
 
 ggsave('descriptive-reordered.png',dpi = 600, width = 5, height = 6)
